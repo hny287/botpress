@@ -193,6 +193,9 @@ const cms = (cmsService: CMSService, mediaService: MediaService): typeof sdk.cms
     },
     renderTemplate(templateItem: sdk.cms.TemplateItem, context): sdk.cms.TemplateItem {
       return renderRecursive(templateItem, context)
+    },
+    getContentType(contentTypeId: string): sdk.ContentType {
+      return cmsService.getContentType(contentTypeId)
     }
   }
 }

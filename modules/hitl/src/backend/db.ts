@@ -152,40 +152,27 @@ export default class HitlDb {
         }
   }
 
-  formatMessage = event => {
-    // Convert messenger payloads to HITL-compatible format
-    if (event.channel === 'messenger' && event.payload.quick_replies) {
+  renderHitlCompatibleMessage = async ({ payload, channel, botId }) => {
+    // Convert single choise to HITL-compatible format (in channel-web this is handled via hook)
+    if (channel !== 'web' && payload.quick_replies) {
       return {
         type: 'custom',
-        raw_message: {
-          type: 'custom',
-          module: 'channel-messenger',
-          component: 'QuickReplies',
-          quick_replies: event.payload.quick_replies,
-          wrapped: { type: 'text', ..._.omit(event.payload, 'quick_replies') }
-        }
-      }
-    } else if (event.channel === 'messenger' && _.get(event.payload, 'attachment.payload.elements')) {
-      return {
-        type: 'carousel',
-        raw_message: {
-          text: ' ',
-          type: 'carousel',
-          elements: _.get(event.payload, 'attachment.payload.elements').map(card => ({
-            title: card.title,
-            picture: card.image_url,
-            subtitle: card.subtitle,
-            buttons: card.buttons.map(a => ({
-              ...a,
-              type: a.type === 'web_url' ? 'open_url' : a.type
-            }))
-          })),
-          fromMessenger: true
-        }
+        module: 'channel-web',
+        component: 'QuickReplies',
+        quick_replies: payload.quick_replies,
+        wrapped: { type: 'text', ..._.omit(payload, 'quick_replies') }
       }
     }
 
-    return { type: event.type, raw_message: event.payload }
+    // Render element for HITL as a channel-web element
+    if (channel !== 'web' && payload.contentId) {
+      const contentElement = await this.bp.cms.getContentElement(botId, payload.contentId.substring(1))
+      const contentTypeRenderer = this.bp.cms.getContentType(contentElement.contentType)
+      const payloads = await contentTypeRenderer.renderElement({ ...payload.elementData, typing: false }, 'web')
+      return payloads[0] // Assuming first element will be an actual payload
+    }
+
+    return payload
   }
 
   async appendMessageToSession(event: sdk.IO.Event, sessionId: string, direction: string) {
@@ -197,19 +184,17 @@ export default class HitlDb {
       source = event.payload.agent ? 'agent' : 'bot'
     }
 
-    const message = {
+    const raw_message = await this.renderHitlCompatibleMessage(event)
+
+    const message: any = {
       session_id: sessionId,
-      type: event.type,
-      raw_message: event.payload,
       text,
+      type: raw_message.type || event.type,
+      raw_message,
       source,
       direction,
       ts: new Date()
     }
-
-    const { type, raw_message } = this.formatMessage(event)
-    message.type = type
-    message.raw_message = raw_message
 
     return Bluebird.join(
       this.knex('hitl_messages').insert({

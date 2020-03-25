@@ -33,7 +33,6 @@ function renderMessenger(data) {
   return [
     ...events,
     {
-      type: 'text',
       text: data.text
     }
   ]

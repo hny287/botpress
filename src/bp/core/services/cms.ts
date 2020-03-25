@@ -625,6 +625,12 @@ export class CMSService implements IDisposeOnExit {
       payloads = [payloads]
     }
 
+    // Keep info required to re-render payload (for modules like HITL)
+    payloads = payloads.map(payload => ({
+      ...payload,
+      ...(payload.type === 'typing' ? {} : { contentId, elementData: { ...additionalData, ...args } })
+    }))
+
     return payloads
   }
 
