@@ -436,7 +436,7 @@ reducer = reduceReducers(
                   remapNode = value.node
                 }
 
-                return { ...value, node: (targetNode && targetNode.name) || remapNode }
+                return { ...value, node: (targetNode && targetNode.id) || remapNode }
               })
 
               return { ...node, next, lastModified: new Date() }
@@ -617,7 +617,14 @@ reducer = reduceReducers(
                 if (node.id !== state.currentFlowNode) {
                   return {
                     ...node,
-                    next: node.next && updateNodeName(node.next)
+                    next:
+                      node.next &&
+                      node.next.map(element => {
+                        return {
+                          ...element,
+                          node: needsUpdate(element.node) ? payload.id : element.node
+                        }
+                      })
                   }
                 }
 
