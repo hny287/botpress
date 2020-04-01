@@ -4,7 +4,7 @@
     "next": [
       {
         "condition": "event.nlu.intent.name === 'switch-context'",
-        "node": "animal-choices"
+        "node": "skill-1b8623"
       }
     ],
     "onReceive": []
@@ -23,7 +23,7 @@
       "next": [
         {
           "condition": "true",
-          "node": "animal-choices"
+          "node": "skill-1b8623"
         }
       ]
     },
@@ -33,7 +33,7 @@
       "next": [
         {
           "condition": "true",
-          "node": "ask-questions"
+          "node": "d1dc5d050c"
         }
       ],
       "onEnter": [
@@ -48,7 +48,7 @@
       "next": [
         {
           "condition": "true",
-          "node": "ask-questions"
+          "node": "d1dc5d050c"
         }
       ],
       "onEnter": [
@@ -63,12 +63,10 @@
       "next": [
         {
           "condition": "true",
-          "node": "animal-choices"
+          "node": "skill-1b8623"
         }
       ],
-      "onEnter": [
-        "say #!builtin_text-UP2ozm"
-      ],
+      "onEnter": ["say #!builtin_text-UP2ozm"],
       "onReceive": null
     },
     {
@@ -81,17 +79,17 @@
         {
           "caption": "User picked [monkey]",
           "condition": "temp['skill-choice-ret'] == \"monkey\"",
-          "node": "monkey-context"
+          "node": "95f4dc87f3"
         },
         {
           "caption": "User picked [giraffe]",
           "condition": "temp['skill-choice-ret'] == \"giraffe\"",
-          "node": "giraffe-context"
+          "node": "1eb55573da"
         },
         {
           "caption": "On failure",
           "condition": "true",
-          "node": "catch"
+          "node": "4916a117f1"
         }
       ],
       "onEnter": null,
@@ -101,10 +99,7 @@
       "id": "d1dc5d050c",
       "name": "ask-questions",
       "next": [],
-      "onEnter": [
-        "say #!builtin_text-lALv5x",
-        "say #!builtin_text-yFOIFD"
-      ],
+      "onEnter": ["say #!builtin_text-lALv5x", "say #!builtin_text-yFOIFD"],
       "onReceive": null
     }
   ]

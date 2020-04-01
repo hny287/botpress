@@ -598,11 +598,11 @@ reducer = reduceReducers(
         const currentNode = _.find(state.flowsByName[state.currentFlow].nodes, { id: state.currentFlowNode })
         const needsUpdate = name => name === (currentNode || {}).name && payload.name
 
-        const updateNodeName = elements =>
+        const updateNodeTransition = elements =>
           elements.map(element => {
             return {
               ...element,
-              node: needsUpdate(element.node) ? payload.name : element.node
+              node: needsUpdate(element.node) ? payload.id : element.node
             }
           })
 
@@ -617,14 +617,7 @@ reducer = reduceReducers(
                 if (node.id !== state.currentFlowNode) {
                   return {
                     ...node,
-                    next:
-                      node.next &&
-                      node.next.map(element => {
-                        return {
-                          ...element,
-                          node: needsUpdate(element.node) ? payload.id : element.node
-                        }
-                      })
+                    next: node.next && updateNodeTransition(node.next)
                   }
                 }
 
@@ -632,7 +625,7 @@ reducer = reduceReducers(
               }),
               catchAll: {
                 ...currentFlow.catchAll,
-                next: currentFlow.catchAll.next && updateNodeName(currentFlow.catchAll.next)
+                next: currentFlow.catchAll.next && updateNodeTransition(currentFlow.catchAll.next)
               }
             }
           }

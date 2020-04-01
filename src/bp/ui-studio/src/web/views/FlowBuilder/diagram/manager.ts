@@ -357,8 +357,7 @@ export class DiagramManager {
         // Handle subflow connection
       } else {
         const sourcePort = node.ports['out' + index]
-        let targetNode = _.find(allNodes, { id: next.node })
-        targetNode = targetNode || _.find(allNodes, { name: next.node })
+        const targetNode = allNodes.find(({ name, id }) => name === next.node || id === next.node)
 
         if (!targetNode) {
           // TODO Show warning that target node doesn't exist

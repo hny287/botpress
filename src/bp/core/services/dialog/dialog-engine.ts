@@ -288,7 +288,7 @@ export class DialogEngine {
       return event
     } else {
       const flow = this._findFlow(event.botId, context.currentFlow || '')
-      const nodeName = flow.nodes.find(node => node.id === transitionTo)!.name
+      const nodeName = (flow.nodes.find(node => node.id === transitionTo) || {}).name
       transitionTo = nodeName || transitionTo
       // Transition to the target node in the current flow
       this._logTransition(event.botId, event.target, context.currentFlow, context.currentNode, transitionTo)
